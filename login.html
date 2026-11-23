@@ -18604,34 +18604,42 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const username = document.querySelector('input[name="username"]').value.trim();
-  const email = document.querySelector('input[name="email"]').value.trim();
+  const password = document.querySelector('input[name="password"]').value;
 
-  if (!username || !email) {
+  if (!username || !password) {
     alert("Please fill all fields.");
     return;
   }
 
+  // Button loading state (optional)
+  const submitBtn = document.querySelector(".sqdOP.L3NKy.y3zKF");
+  submitBtn.disabled = true;
+
   fetch("/api/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, email })
+    body: JSON.stringify({ username, password })
   })
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        // Save auth token/session
+        // Save auth info
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userRole", data.user.role);
         localStorage.setItem("username", data.user.username);
+        localStorage.setItem("userEmail", data.user.email || "N/A");
+        localStorage.setItem("loginTime", new Date().toLocaleString());
 
-        // Redirect to admin panel
+        // Redirect
         window.location.href = data.redirectUrl || "/admin";
       } else {
         alert(data.message || "Login failed!");
+        submitBtn.disabled = false;
       }
     })
     .catch(() => {
       alert("Server connection failed!");
+      submitBtn.disabled = false;
     });
 });
 </script>
