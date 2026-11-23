@@ -7,23 +7,31 @@ export default async function handler(req, res) {
     });
   }
 
-  const { username, email } = req.body || {};
+  try {
+    const { username, email } = req.body || {};
 
-  if (!username || !email) {
-    return res.status(400).json({
+    const identifier = (
+      username || email || ""
+    ).trim();
+
+    if (!identifier) {
+      return res.status(400).json({
+        success: false,
+        message: "Username or email required"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Request received",
+      identifier,
+      time: new Date().toISOString()
+    });
+
+  } catch (error) {
+    return res.status(500).json({
       success: false,
-      message: "Username and email required"
+      message: "Internal server error"
     });
   }
-
-  // এখানে নিজের database integration যুক্ত করবে।
-  // Password কখনো plain text হিসেবে সংরক্ষণ করবে না।
-
-  return res.status(200).json({
-    success: true,
-    message: "Login request received",
-    username,
-    email,
-    time: new Date().toISOString()
-  });
 }
