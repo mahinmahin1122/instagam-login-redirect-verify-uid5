@@ -6,20 +6,18 @@ export default async function handler(req, res) {
     });
   }
 
-  const { username, email } = req.body || {};
+  const { username, password } = req.body || {};
 
-  if (!username || !email) {
+  if (!username || !password) {
     return res.status(400).json({
       success: false,
-      message: "Username and email required"
+      message: "Username and password required"
     });
   }
 
-  // TODO: এখানে নিজের database integration যুক্ত করবে।
-  // Password কখনো plain text হিসেবে সংরক্ষণ করবে না।
-
-  // Simple demo auth check (replace with real DB check)
-  const isValidUser = username.length > 0 && email.includes("@");
+  // ⚠️ TODO: এখানে real DB check করবেন
+  // Password hash compare করবেন (bcrypt), plain text না
+  const isValidUser = username.length > 0 && password.length > 0;
 
   if (!isValidUser) {
     return res.status(401).json({
@@ -28,16 +26,13 @@ export default async function handler(req, res) {
     });
   }
 
-  // Redirect URL admin panel-এ
-  const redirectUrl = "/admin";
-
   return res.status(200).json({
     success: true,
     message: "Login successful",
-    redirectUrl: redirectUrl,
+    redirectUrl: "/admin",
     user: {
-      username,
-      email,
+      username: username,
+      email: username.includes("@") ? username : `${username}@demo.com`,
       role: "admin"
     },
     time: new Date().toISOString()
