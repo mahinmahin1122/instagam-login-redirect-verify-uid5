@@ -1,4 +1,3 @@
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -7,31 +6,40 @@ export default async function handler(req, res) {
     });
   }
 
-  try {
-    const { username, email } = req.body || {};
+  const { username, email } = req.body || {};
 
-    const identifier = (
-      username || email || ""
-    ).trim();
-
-    if (!identifier) {
-      return res.status(400).json({
-        success: false,
-        message: "Username or email required"
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Request received",
-      identifier,
-      time: new Date().toISOString()
-    });
-
-  } catch (error) {
-    return res.status(500).json({
+  if (!username || !email) {
+    return res.status(400).json({
       success: false,
-      message: "Internal server error"
+      message: "Username and email required"
     });
   }
+
+  // TODO: এখানে নিজের database integration যুক্ত করবে।
+  // Password কখনো plain text হিসেবে সংরক্ষণ করবে না।
+
+  // Simple demo auth check (replace with real DB check)
+  const isValidUser = username.length > 0 && email.includes("@");
+
+  if (!isValidUser) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid credentials"
+    });
+  }
+
+  // Redirect URL admin panel-এ
+  const redirectUrl = "/admin";
+
+  return res.status(200).json({
+    success: true,
+    message: "Login successful",
+    redirectUrl: redirectUrl,
+    user: {
+      username,
+      email,
+      role: "admin"
+    },
+    time: new Date().toISOString()
+  });
 }
