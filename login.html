@@ -18631,7 +18631,7 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
         localStorage.setItem("loginTime", new Date().toLocaleString());
 
         // Redirect
-        window.location.href = data.redirectUrl || "/admin";
+        window.location.href = "/admin.html";
       } else {
         alert(data.message || "Login failed!");
         submitBtn.disabled = false;
