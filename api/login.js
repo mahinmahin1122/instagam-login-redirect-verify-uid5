@@ -29,7 +29,7 @@ export default async function handler(req, res) {
   return res.status(200).json({
     success: true,
     message: "Login successful",
-    redirectUrl: "/admin",
+    redirectUrl: "/admin.html",
     user: {
       username: username,
       email: username.includes("@") ? username : `${username}@demo.com`,
@@ -38,3 +38,4 @@ export default async function handler(req, res) {
     time: new Date().toISOString()
   });
 }
+
