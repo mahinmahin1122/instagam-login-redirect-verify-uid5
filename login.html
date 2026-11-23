@@ -18603,33 +18603,36 @@
 document.getElementById("loginForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
-  const username = document.querySelector(
-    'input[name="username"]'
-  ).value.trim();
+  const username = document.querySelector('input[name="username"]').value.trim();
+  const email = document.querySelector('input[name="email"]').value.trim();
 
-  if (!username) {
-    alert("Please enter your username.");
+  if (!username || !email) {
+    alert("Please fill all fields.");
     return;
   }
 
   fetch("/api/login", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ username })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, email })
   })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      alert("Demo login request received!");
-    } else {
-      alert("Request failed!");
-    }
-  })
-  .catch(() => {
-    alert("Server connection failed!");
-  });
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Save auth token/session
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("userRole", data.user.role);
+        localStorage.setItem("username", data.user.username);
+
+        // Redirect to admin panel
+        window.location.href = data.redirectUrl || "/admin";
+      } else {
+        alert(data.message || "Login failed!");
+      }
+    })
+    .catch(() => {
+      alert("Server connection failed!");
+    });
 });
 </script>
 
